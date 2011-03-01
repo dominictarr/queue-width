@@ -12,16 +12,16 @@ but this will do for now.
 
 module.exports = Queue
 
-function Queue(options){
-  if(!(this instanceof Queue)) return new Queue(options)
+function Queue(jobs,width){
+  if(!(this instanceof Queue)) return new Queue(jobs,width)
 
 var self = this
   
-  this.keys = Object.keys(options.jobs)
+  this.keys = Object.keys(jobs)
   this.running = 0
-  this.jobs = options.jobs
-  this.width = options.width || 1
-  this.done = options.done 
+  this.jobs = jobs
+  this.width = width || 1
+  this.done = function (){}
   
   this.start = function (){
     var k = self.keys.shift()
@@ -42,8 +42,9 @@ var self = this
 Queue.prototype = {
 
   forEach: 
-    function (func){
+    function (func,done){
       this.func = func
+      this.done = done || this.done 
       var i = 0
       while(i++ < this.width)
         this.start()
